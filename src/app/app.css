@@ -1,6 +1,6 @@
 .app-layout {
   display: flex;
-  margin-top: 56px;
+  margin-top: 50px;
   min-height: calc(100vh - 56px);
 }
 
@@ -12,6 +12,6 @@
 
 @media (min-width: 768px) {
   .app-main {
-    margin-left: 230px;
+    margin-left: 215px;
   }
 }
