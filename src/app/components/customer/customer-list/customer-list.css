@@ -1,0 +1,22 @@
+.dialog-scrollable[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dialog-scrollable[open] > .dialog-header,
+.dialog-scrollable[open] > .dialog-footer {
+  flex-shrink: 0;
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dialog-scrollable[open] > .dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}

@@ -1,0 +1,321 @@
+<!-- Form Card -->
+<div class="fade-in">
+  <div class="card-body p-5">
+    <!-- Success Alert -->
+    <div *ngIf="successMessage" class="alert theme-success fade show border-0" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-check-circle me-3"></i>
+        <div>
+          <h5 class="mb-0">Success!</h5>
+          <small>{{ successMessage }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert theme-danger fade show border-0" role="alert">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-circle me-3"></i>
+        <div>
+          <h5 class="mb-0">Error!</h5>
+          <small>{{ errorMessage }}</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form id="customerForm" [formGroup]="customerForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Personal Information Section -->
+      <div class="mb-5">
+        <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+          <div class="badge bg-primary rounded-pill p-2 me-3">
+            <i class="bi bi-person"></i>
+          </div>
+          <h4 class="mb-0 fw-bold">Personal Information</h4>
+        </div>
+
+        <div class="row g-3">
+          <!-- Full Name -->
+          <div class="col-12">
+            <label for="fullName" class="form-label">
+              Full Name <span class="theme-danger">*</span>
+            </label>
+            <input type="text" id="fullName" formControlName="fullName" placeholder="Enter your full name"
+              maxlength="150" class="form-control" [class.is-invalid]="submitted && f['fullName'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && f['fullName'].invalid">
+              <small *ngIf="f['fullName'].errors?.['required']">
+                <i class="bi bi-exclamation-circle"></i> Full name is required.
+              </small>
+              <small *ngIf="f['fullName'].errors?.['minlength']">
+                <i class="bi bi-exclamation-circle"></i> Full name must be at least 3 characters.
+              </small>
+              <small *ngIf="getFieldError('fullName')">
+                <i class="bi bi-exclamation-circle"></i> {{ getFieldError('fullName') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- CPF -->
+          <div class="md:col-6">
+            <label for="cpf" class="form-label">
+              CPF <span class="theme-danger">*</span>
+            </label>
+            <input type="text" id="cpf" formControlName="cpf" (input)="applyMask('cpf')" placeholder="000.000.000-00"
+              class="form-control" [class.is-invalid]="submitted && f['cpf'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && f['cpf'].invalid">
+              <small *ngIf="f['cpf'].errors?.['required']">
+                <i class="bi bi-exclamation-circle"></i> CPF is required.
+              </small>
+              <small *ngIf="f['cpf'].errors?.['pattern']">
+                <i class="bi bi-exclamation-circle"></i> Format: 000.000.000-00
+              </small>
+              <small *ngIf="getFieldError('cpf')">
+                <i class="bi bi-exclamation-circle"></i> {{ getFieldError('cpf') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="md:col-6">
+            <label for="email" class="form-label">
+              Email <span class="theme-danger">*</span>
+            </label>
+            <input type="email" id="email" formControlName="email" placeholder="user@example.com" maxlength="150"
+              class="form-control" [class.is-invalid]="submitted && f['email'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && f['email'].invalid">
+              <small *ngIf="f['email'].errors?.['required']">
+                <i class="bi bi-exclamation-circle"></i> Email is required.
+              </small>
+              <small *ngIf="f['email'].errors?.['email']">
+                <i class="bi bi-exclamation-circle"></i> Email format is invalid.
+              </small>
+              <small *ngIf="getFieldError('email')">
+                <i class="bi bi-exclamation-circle"></i> {{ getFieldError('email') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="md:col-6">
+            <label for="phoneNumber" class="form-label">
+              Phone Number <span class="theme-danger">*</span>
+            </label>
+            <input type="tel" id="phoneNumber" formControlName="phoneNumber" (input)="applyMask('phoneNumber')"
+              placeholder="(11) 99999-9999" class="form-control"
+              [class.is-invalid]="submitted && f['phoneNumber'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && f['phoneNumber'].invalid">
+              <small *ngIf="f['phoneNumber'].errors?.['required']">
+                <i class="bi bi-exclamation-circle"></i> Phone is required.
+              </small>
+              <small *ngIf="f['phoneNumber'].errors?.['pattern']">
+                <i class="bi bi-exclamation-circle"></i> Format: (11) 99999-9999
+              </small>
+              <small *ngIf="getFieldError('phoneNumber')">
+                <i class="bi bi-exclamation-circle"></i> {{ getFieldError('phoneNumber') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Additional Phone -->
+          <div class="md:col-6">
+            <label for="additionalPhone" class="form-label">
+              Additional Phone
+            </label>
+            <input type="tel" id="additionalPhone" formControlName="additionalPhone"
+              (input)="applyMask('additionalPhone')" placeholder="(11) 98888-8888 (optional)" class="form-control"
+              [class.is-invalid]="submitted && f['additionalPhone'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && f['additionalPhone'].invalid">
+              <small *ngIf="f['additionalPhone'].errors?.['pattern']">
+                <i class="bi bi-exclamation-circle"></i> Format: (11) 99999-9999
+              </small>
+            </div>
+          </div>
+
+          <!-- Birth Date -->
+          <div class="md:col-6">
+            <label for="birthDate" class="form-label">
+              Birth Date <span class="theme-danger">*</span>
+            </label>
+            <input type="date" id="birthDate" formControlName="birthDate" class="form-control"
+              [class.is-invalid]="submitted && f['birthDate'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && f['birthDate'].invalid">
+              <small *ngIf="f['birthDate'].errors?.['required']">
+                <i class="bi bi-exclamation-circle"></i> Birth date is required.
+              </small>
+              <small *ngIf="getFieldError('birthDate')">
+                <i class="bi bi-exclamation-circle"></i> {{ getFieldError('birthDate') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div class="md:col-6">
+            <div class="form-field">
+              <label for="gender" class="form-label">Gender</label>
+              <select id="gender" formControlName="gender" class="form-control"
+                [class.is-invalid]="submitted && f['gender'].invalid">
+                <option value="">Select gender</option>
+                <option *ngFor="let option of genderOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Section -->
+      <div class="mb-5">
+        <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+          <div class="badge bg-success rounded-pill p-2 me-3">
+            <i class="bi bi-geo-alt"></i>
+          </div>
+          <h4 class="mb-0 fw-bold">Address <span class="badge ms-2">Optional</span></h4>
+        </div>
+
+        <!-- Address Checkbox -->
+        <div class="mb-4 form-field">
+          <input type="checkbox" id="includeAddress" class="check" [checked]="showAddress" [disabled]="isReadOnly" (change)="toggleAddress()" />
+          <label for="includeAddress">
+            Include address information
+          </label>
+        </div>
+
+        <!-- Address Fields -->
+        <div *ngIf="showAddress" class="row g-3">
+          <!-- Zip Code -->
+          <div class="md:col-3">
+            <label for="zipCode" class="form-label">
+              Zip Code <span *ngIf="showAddress" class="theme-danger">*</span>
+            </label>
+            <input type="text" id="zipCode" formControlName="zipCode" (input)="applyMask('zipCode')"
+              placeholder="00000-000" class="form-control"
+              [class.is-invalid]="submitted && showAddress && f['zipCode'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['zipCode'].invalid">
+              <small *ngIf="f['zipCode'].errors?.['required']">
+                <i class="bi bi-exclamation-circle"></i> {{ errorText('zipCode') }}
+              </small>
+              <small *ngIf="f['zipCode'].errors?.['pattern']">
+                <i class="bi bi-exclamation-circle"></i> Format: 00000-000
+              </small>
+            </div>
+          </div>
+
+          <!-- Street -->
+          <div class="md:col-9">
+            <label for="street" class="form-label">
+              Street <span *ngIf="showAddress" class="theme-danger">*</span>
+            </label>
+            <input type="text" id="street" formControlName="street" placeholder="Street name" maxlength="150"
+              class="form-control" [class.is-invalid]="submitted && showAddress && f['street'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['street'].invalid">
+              <small><i class="bi bi-exclamation-circle"></i> {{ errorText('street') }}</small>
+            </div>
+          </div>
+
+          <!-- Number -->
+          <div class="md:col-3">
+            <label for="number" class="form-label">
+              Number <span *ngIf="showAddress" class="theme-danger">*</span>
+            </label>
+            <input type="text" id="number" formControlName="number" placeholder="Number" maxlength="20"
+              class="form-control" [class.is-invalid]="submitted && showAddress && f['number'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['number'].invalid">
+              <small><i class="bi bi-exclamation-circle"></i> {{ errorText('number') }}</small>
+            </div>
+          </div>
+
+          <!-- Neighborhood -->
+          <div class="md:col-9">
+            <label for="neighborhood" class="form-label">
+              Neighborhood <span *ngIf="showAddress" class="theme-danger">*</span>
+            </label>
+            <input type="text" id="neighborhood" formControlName="neighborhood" placeholder="Neighborhood"
+              maxlength="100" class="form-control"
+              [class.is-invalid]="submitted && showAddress && f['neighborhood'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['neighborhood'].invalid">
+              <small><i class="bi bi-exclamation-circle"></i> {{ errorText('neighborhood') }}</small>
+            </div>
+          </div>
+
+          <!-- State -->
+          <div class="md:col-3">
+            <div class="form-field">
+              <label for="state" class="form-label">
+                State <span *ngIf="showAddress" class="theme-danger">*</span>
+              </label>
+              <select id="state" formControlName="state" class="form-control"
+                [class.is-invalid]="submitted && showAddress && f['state'].invalid">
+                <option value="">Select a state</option>
+                <option *ngFor="let state of brazilianStates" [value]="state">
+                  {{ state }}
+                </option>
+              </select>
+              <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['state'].invalid">
+                <small><i class="bi bi-exclamation-circle"></i> {{ errorText('state') }}</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="md:col-9">
+            <label for="city" class="form-label">
+              City <span *ngIf="showAddress" class="theme-danger">*</span>
+            </label>
+            <input type="text" id="city" formControlName="city" placeholder="City" maxlength="100" class="form-control"
+              [class.is-invalid]="submitted && showAddress && f['city'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['city'].invalid">
+              <small><i class="bi bi-exclamation-circle"></i> {{ errorText('city') }}</small>
+            </div>
+          </div>
+
+          <!-- Complement -->
+          <div class="md:col-12">
+            <label for="complement" class="form-label">
+              Complement
+            </label>
+            <input type="text" id="complement" formControlName="complement" placeholder="Apt, Suite, etc (optional)"
+              maxlength="100" class="form-control"
+              [class.is-invalid]="submitted && showAddress && f['complement'].invalid" />
+            <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['complement'].invalid">
+              <small><i class="bi bi-exclamation-circle"></i> {{ errorText('complement') }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+<ng-template #footer>
+  <ng-container *ngIf="!isReadOnly; else viewActions">
+    <small class="me-auto theme-muted">
+      <i class="bi bi-info-circle"></i> All fields marked with <span class="theme-danger">*</span> are required
+    </small>
+    <button *ngIf="!isEditMode" type="reset" form="customerForm" class="btn btn-lg btn-outline theme-secondary" (click)="resetForm()">
+      <i class="bi bi-arrow-clockwise me-2"></i> Clear
+    </button>
+    <button type="button" class="btn btn-lg btn-outline theme-secondary" (click)="cancel()">
+      <i class="bi bi-x-circle me-2"></i> Cancel
+    </button>
+    <button type="submit" form="customerForm" class="btn btn-lg btn-solid theme-primary" [disabled]="loading">
+      <span *ngIf="!loading">
+        <i class="bi bi-check-circle me-2"></i> {{ isEditMode ? 'Save Changes' : 'Register Customer' }}
+      </span>
+      <span *ngIf="loading">
+        <span class="spinner-border spinner-sm me-2" role="status" aria-hidden="true"></span>
+        Processing...
+      </span>
+    </button>
+  </ng-container>
+
+  <ng-template #viewActions>
+    <a routerLink="/customers" class="btn btn-lg btn-outline theme-secondary">
+      <i class="bi bi-arrow-left me-2"></i> Back
+    </a>
+    <a [routerLink]="['/customers', customerId, 'edit']" class="btn btn-lg btn-solid theme-primary">
+      <i class="bi bi-pencil me-2"></i> Edit
+    </a>
+  </ng-template>
+</ng-template>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Navbar } from './components/navbar/navbar';
+import { Sidebar } from './components/sidebar/sidebar';
+
+@Component({
+  imports: [RouterOutlet, Navbar, Sidebar],
+  selector: 'app-root',
+  styleUrl: './app.css',
+  templateUrl: './app.html',
+})
+export class App {
+}
