@@ -132,7 +132,7 @@
 │   "success": true,                                          │
 │   "message": "Customer successfully registered.",           │
 │   "data": {                                                 │
-│     "id": 1,                                                │
+│     "id": "550e8400-e29b-41d4-a716-446655440000",           │
 │     "fullName": "Maria da Silva",                           │
 │     "email": "maria@example.com",                           │
 │     "phoneNumber": "11999999999",                           │
@@ -170,7 +170,7 @@
 ### Customer Model
 ```typescript
 interface Customer {
-  id?: number;
+  id?: string;
   fullName: string;           // Required, 3-150 chars
   cpf?: string;               // Required, not returned in response
   email: string;              // Required, valid email

@@ -235,7 +235,7 @@ Accept-Language: en-US
   "success": true,
   "message": "Customer registered successfully",
   "data": {
-    "id": 1,
+    "id": "550e8400-e29b-41d4-a716-446655440000",
     "fullName": "John Doe",
     "email": "john@example.com",
     "phoneNumber": "11999999999",
@@ -269,7 +269,7 @@ Accept-Language: en-US
   "data": {
     "content": [
       {
-        "id": 1,
+        "id": "550e8400-e29b-41d4-a716-446655440000",
         "fullName": "John Doe",
         "email": "john@example.com",
         "phoneNumber": "11999999999",
@@ -286,8 +286,10 @@ Accept-Language: en-US
 
 #### 3. Get Customer by ID
 
+Use the UUID returned by the API, without a prefix, in the customer URL.
+
 ```http
-GET /api/v1/customers/1
+GET /api/v1/customers/550e8400-e29b-41d4-a716-446655440000
 Accept-Language: en-US
 ```
 
@@ -297,7 +299,7 @@ Accept-Language: en-US
   "success": true,
   "message": "Customer retrieved successfully",
   "data": {
-    "id": 1,
+    "id": "550e8400-e29b-41d4-a716-446655440000",
     "fullName": "John Doe",
     ...
   }
@@ -307,7 +309,7 @@ Accept-Language: en-US
 #### 4. Update Customer
 
 ```http
-PUT /api/v1/customers/1
+PUT /api/v1/customers/550e8400-e29b-41d4-a716-446655440000
 Content-Type: application/json
 Accept-Language: en-US
 
@@ -323,7 +325,7 @@ Accept-Language: en-US
 #### 5. Delete Customer
 
 ```http
-DELETE /api/v1/customers/1
+DELETE /api/v1/customers/550e8400-e29b-41d4-a716-446655440000
 ```
 
 **Response** (200 OK):
@@ -663,16 +665,19 @@ curl -X POST http://localhost:8080/api/v1/customers \
 # Get all customers
 curl http://localhost:8080/api/v1/customers
 
+# Set CUSTOMER_ID to the UUID returned by the API.
+CUSTOMER_ID='<customer-uuid>'
+
 # Get single customer
-curl http://localhost:8080/api/v1/customers/1
+curl "http://localhost:8080/api/v1/customers/$CUSTOMER_ID"
 
 # Update customer
-curl -X PUT http://localhost:8080/api/v1/customers/1 \
+curl -X PUT "http://localhost:8080/api/v1/customers/$CUSTOMER_ID" \
   -H 'Content-Type: application/json' \
   -d '{...}'
 
 # Delete customer
-curl -X DELETE http://localhost:8080/api/v1/customers/1
+curl -X DELETE "http://localhost:8080/api/v1/customers/$CUSTOMER_ID"
 ```
 
 ### Using Postman

@@ -175,13 +175,13 @@ export class CustomerService {
   getCustomers(page: number = 0, size: number = 20): Observable<ApiResponse<PaginatedResponse>>
 
   // Get customer by ID
-  getCustomer(id: number): Observable<ApiResponse<Customer>>
+  getCustomerById(id: string): Observable<ApiResponse<Customer>>
 
   // Update customer
-  updateCustomer(id: number, customer: Customer): Observable<ApiResponse<Customer>>
+  updateCustomer(id: string, customer: Customer): Observable<ApiResponse<Customer>>
 
   // Delete customer
-  deleteCustomer(id: number): Observable<ApiResponse<void>>
+  deleteCustomer(id: string): Observable<ApiResponse<null>>
 }
 ```
 
@@ -366,7 +366,7 @@ submitForm(): void {
 
 ```typescript
 export interface Customer {
-  id?: number;
+  id?: string;
   fullName: string;
   cpf: string;
   email: string;

@@ -9,7 +9,7 @@ export interface Address {
 }
 
 export interface Customer {
-  id?: number;
+  id?: string;
   fullName: string;
   cpf?: string;
   email: string;

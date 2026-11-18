@@ -328,7 +328,7 @@ curl -X POST http://localhost:8080/api/v1/customers \
   "success": true,
   "message": "Customer registered successfully",
   "data": {
-    "id": 1,
+    "id": "550e8400-e29b-41d4-a716-446655440000",
     "fullName": "John Doe",
     ...
   }
@@ -355,7 +355,9 @@ curl http://localhost:8080/api/v1/customers
 
 #### Get Single Customer
 ```bash
-curl http://localhost:8080/api/v1/customers/1
+# Set CUSTOMER_ID to the UUID returned by the API.
+CUSTOMER_ID='<customer-uuid>'
+curl "http://localhost:8080/api/v1/customers/$CUSTOMER_ID"
 
 # Expected response (200 OK):
 {
@@ -367,7 +369,7 @@ curl http://localhost:8080/api/v1/customers/1
 
 #### Update Customer
 ```bash
-curl -X PUT http://localhost:8080/api/v1/customers/1 \
+curl -X PUT "http://localhost:8080/api/v1/customers/$CUSTOMER_ID" \
   -H 'Content-Type: application/json' \
   -d '{
     "fullName": "Jane Doe",
@@ -380,7 +382,7 @@ curl -X PUT http://localhost:8080/api/v1/customers/1 \
 
 #### Delete Customer
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/customers/1
+curl -X DELETE "http://localhost:8080/api/v1/customers/$CUSTOMER_ID"
 
 # Expected response (200 OK):
 {
@@ -847,7 +849,7 @@ Should show proxy logs:
   "success": true,
   "message": "Customer successfully registered.",
   "data": {
-    "id": 1,
+    "id": "550e8400-e29b-41d4-a716-446655440000",
     "fullName": "John Smith",
     "email": "john@example.com",
     "phoneNumber": "11999999999",

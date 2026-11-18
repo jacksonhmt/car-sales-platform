@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { CustomerRegistration } from './customer-registration';
@@ -9,6 +9,7 @@ import { CustomerService } from '../../../services/customer.service';
 import { CustomerModalFooterService } from '../../../services/customer-modal-footer.service';
 
 describe('CustomerRegistration', () => {
+  const customerId = '20da0bd9-f75b-4c62-9da2-b363b196a549';
   let component: CustomerRegistration;
   let fixture: ComponentFixture<CustomerRegistration>;
 
@@ -77,9 +78,9 @@ describe('CustomerRegistration', () => {
   it('should lock the CPF when editing and still send it on save', () => {
     const update = vi
       .spyOn(TestBed.inject(CustomerService), 'updateCustomer')
-      .mockReturnValue(of({ success: true, message: 'Saved', data: undefined } as any));
+      .mockReturnValue(of({ success: true, message: 'Saved' }));
 
-    component.customerId = 1;
+    component.customerId = customerId;
     component['patchCustomer']({
       fullName: 'Maria da Silva',
       cpf: '52998224725',
@@ -92,12 +93,38 @@ describe('CustomerRegistration', () => {
     expect(component.customerForm.controls['cpf'].value).toBe('529.982.247-25');
 
     component.onSubmit();
+    expect(update.mock.calls[0][0]).toBe(customerId);
     expect(update.mock.calls[0][1].cpf).toBe('529.982.247-25');
+  });
+
+  it('loads and updates a customer using the UUID from the route', () => {
+    vi.spyOn(TestBed.inject(ActivatedRoute).snapshot.paramMap, 'get').mockReturnValue(customerId);
+    const service = TestBed.inject(CustomerService);
+    const getCustomer = vi.spyOn(service, 'getCustomerById').mockReturnValue(of({
+      success: true,
+      message: 'Retrieved',
+      data: {
+        id: customerId,
+        fullName: 'Maria da Silva',
+        cpf: '52998224725',
+        email: 'maria@example.com',
+        phoneNumber: '11999999999',
+        birthDate: '1990-05-20'
+      }
+    }));
+    const updateCustomer = vi.spyOn(service, 'updateCustomer').mockReturnValue(of({ success: true, message: 'Saved' }));
+    const editFixture = TestBed.createComponent(CustomerRegistration);
+    editFixture.detectChanges();
+
+    expect(getCustomer).toHaveBeenCalledWith(customerId);
+    expect(editFixture.componentInstance.customerId).toBe(customerId);
+    editFixture.componentInstance.onSubmit();
+    expect(updateCustomer).toHaveBeenCalledWith(customerId, expect.objectContaining({ cpf: '529.982.247-25' }));
   });
 
   it('should disable the form and register the footer template in read-only mode', () => {
     Object.assign(component, { isReadOnly: true });
-    component.customerId = 1;
+    component.customerId = customerId;
     component['patchCustomer']({
       fullName: 'Maria da Silva',
       cpf: '52998224725',

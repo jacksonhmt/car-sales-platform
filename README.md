@@ -27,7 +27,13 @@ Open [http://localhost:4200](http://localhost:4200). The customer features requi
 ## ✨ Features
 
 - Dashboard with the total number of customers
-- Paginated customer list with create, view, edit and delete actions
+- Customer list with page size adjusted to the available screen height, and create, view, edit and delete actions
+- Customer email shown in the list on wider screens
+- Confirmation dialog before deleting a customer
+- CPF displayed in the customer list with only the first three and last two digits visible
+- Customer table columns adapt to the screen width while keeping names and actions available
+- Name sorting across all customers, with ascending and descending options
+- Search across all customers by name, optionally combined with CPF
 - Customer form with validation and an optional address
 - API error messages and field-level feedback
 - Responsive layout and theme selection
@@ -37,6 +43,12 @@ Open [http://localhost:4200](http://localhost:4200). The customer features requi
 The application uses the relative API URL `/api/v1/customers`, configured in `src/environments/environment.ts`. During development, `proxy.conf.json` forwards `/api` requests to `http://localhost:8080`.
 
 The customer service uses GET, POST, PUT and DELETE requests. See the [Backend Connection Guide](./documentation/BACKEND_CONNECTION.md) for additional integration information.
+
+Customer IDs are UUID strings without a prefix. Use the ID returned by the API in customer URLs. Customer data is cached only in memory and is refreshed when the page is reloaded; the only persisted application setting is the theme.
+
+The name filter is required and must contain 3 to 150 characters. Name and CPF filters accept partial matches; name matching ignores case and accents. When CPF is provided, both filters must match.
+
+When filtering or sorting, the frontend loads every API page and processes the results locally before displaying them. This can take more time and memory as the customer base grows; reopening the list after editing or deleting a customer refreshes the results.
 
 ## 📋 Project Structure
 

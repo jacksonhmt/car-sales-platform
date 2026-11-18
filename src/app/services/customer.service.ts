@@ -35,7 +35,7 @@ export class CustomerService {
     });
   }
 
-  getCustomerById(id: number): Observable<ApiResponse<Customer>> {
+  getCustomerById(id: string): Observable<ApiResponse<Customer>> {
     return this.http.get<ApiResponse<Customer>>(`${this.apiUrl}/${id}`, {
       headers: {
         'Accept-Language': 'en-US'
@@ -43,7 +43,7 @@ export class CustomerService {
     });
   }
 
-  updateCustomer(id: number, customer: Customer): Observable<ApiResponse<Customer>> {
+  updateCustomer(id: string, customer: Customer): Observable<ApiResponse<Customer>> {
     return this.http.put<ApiResponse<Customer>>(`${this.apiUrl}/${id}`, customer, {
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export class CustomerService {
     });
   }
 
-  deleteCustomer(id: number): Observable<ApiResponse<null>> {
+  deleteCustomer(id: string): Observable<ApiResponse<null>> {
     return this.http.delete<ApiResponse<null>>(`${this.apiUrl}/${id}`, {
       headers: {
         'Accept-Language': 'en-US'

@@ -21,7 +21,7 @@ export class CustomerRegistration implements OnInit, OnDestroy {
   errorMessage = '';
   fieldErrors: { [key: string]: string } = {};
   showAddress = false;
-  customerId: number | null = null;
+  customerId: string | null = null;
   private alertTimer?: ReturnType<typeof setTimeout>;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -68,12 +68,12 @@ export class CustomerRegistration implements OnInit, OnDestroy {
     this.initializeForm();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.customerId = Number(id);
+      this.customerId = id;
       this.loadCustomer(this.customerId);
     }
   }
 
-  private loadCustomer(id: number): void {
+  private loadCustomer(id: string): void {
     this.loading = true;
     this.customerService.getCustomerById(id).subscribe({
       next: (response) => {
