@@ -5,24 +5,52 @@
   </div>
 
   <div class="card border-0 shadow-sm">
-    <div class="card-body p-4">
+    <div class="card-body p-5">
       <div class="row g-4">
         <div class="col-12 col-md-6">
-          <label for="theme" class="form-label">{{ i18n.t('settings.theme') }}</label>
-          <select id="theme" class="form-select" [value]="theme.mode()" (change)="onThemeChange($event)">
-            @for (option of themeOptions; track option.value) {
-              <option [value]="option.value">{{ i18n.t(option.labelKey) }}</option>
-            }
-          </select>
+          <div class="form-field">
+            <label id="theme-label" class="form-label">
+              <i class="bi bi-palette me-1" aria-hidden="true"></i>{{ i18n.t('settings.theme') }}
+            </label>
+            <div class="menu show position-static d-flex flex-column shadow-none border rounded-3 w-100" role="group" aria-labelledby="theme-label">
+              @for (option of themeOptions; track option.value) {
+                <button
+                  type="button"
+                  class="menu-item"
+                  [id]="'settings-theme-' + option.value"
+                  [class.active]="theme.mode() === option.value"
+                  [attr.aria-pressed]="theme.mode() === option.value"
+                  (click)="onThemeChange(option.value)"
+                >
+                  <i class="bi opacity-50" [class]="option.icon" aria-hidden="true"></i>{{ i18n.t(option.labelKey) }}
+                  <i class="bi bi-check2 ms-auto" [class.d-none]="theme.mode() !== option.value" aria-hidden="true"></i>
+                </button>
+              }
+            </div>
+          </div>
         </div>
 
         <div class="col-12 col-md-6">
-          <label for="language" class="form-label">{{ i18n.t('settings.language') }}</label>
-          <select id="language" class="form-select" [value]="i18n.locale()" (change)="onLanguageChange($event)">
-            @for (option of languageOptions; track option.value) {
-              <option [value]="option.value">{{ i18n.t(option.labelKey) }}</option>
-            }
-          </select>
+          <div class="form-field">
+            <label id="language-label" class="form-label">
+              <i class="bi bi-translate me-1" aria-hidden="true"></i>{{ i18n.t('settings.language') }}
+            </label>
+            <div class="menu show position-static d-flex flex-column shadow-none border rounded-3 w-100" role="group" aria-labelledby="language-label">
+              @for (option of languageOptions; track option.value) {
+                <button
+                  type="button"
+                  class="menu-item"
+                  [id]="'settings-language-' + option.value"
+                  [class.active]="i18n.locale() === option.value"
+                  [attr.aria-pressed]="i18n.locale() === option.value"
+                  (click)="onLanguageChange(option.value)"
+                >
+                  <i class="bi opacity-50" [class]="option.icon" aria-hidden="true"></i>{{ i18n.t(option.labelKey) }}
+                  <i class="bi bi-check2 ms-auto" [class.d-none]="i18n.locale() !== option.value" aria-hidden="true"></i>
+                </button>
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>
