@@ -1,11 +1,14 @@
 <nav class="navbar md:navbar-expand fixed-top bg-1 border-bottom">
   <div class="container-fluid container">
     <div class="navbar-section">
-      <a class="navbar-brand" routerLink="/dashboard">{{ i18n.t('app.brand') }}</a>
+      <a id="navbar-brand" class="navbar-brand" routerLink="/dashboard">{{ i18n.t('app.brand') }}</a>
     </div>
-    <div class="input-group navbar-search d-none md:d-flex">
-      <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
-      <input id="navbar-search" type="search" class="form-control" [placeholder]="i18n.t('nav.search')" [attr.aria-label]="i18n.t('nav.search')">
+    <div class="navbar-search d-none md:d-flex">
+      <button id="navbar-search-trigger" type="button" class="navbar-search-trigger" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" [attr.aria-label]="i18n.t('nav.search')" (click)="openSearch()">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <span class="navbar-search-trigger-label">{{ i18n.t('nav.search') }}</span>
+        <kbd class="navbar-search-trigger-key">⌘K</kbd>
+      </button>
     </div>
     <div class="navbar-section navbar-section-end">
     <ul class="navbar-nav flex-row">
@@ -15,41 +18,19 @@
           <i class="bi bi-chevron-expand" aria-hidden="true"></i>
         </button>
         <div class="menu border-keyline" id="bd-profile-menu" aria-labelledby="bd-profile" style="--bs-menu-min-width: 10rem;">
-          <button type="button" class="menu-item">
+          <button id="profile-my-profile" type="button" class="menu-item">
             <i class="bi bi-person me-2" aria-hidden="true"></i>{{ i18n.t('nav.myProfile') }}
           </button>
-          <a type="button" class="menu-item" routerLink="/settings" routerLinkActive="active">
+          <a id="profile-settings" type="button" class="menu-item" routerLink="/settings" routerLinkActive="active">
             <i class="bi bi-gear me-2" aria-hidden="true"></i>{{ i18n.t('nav.settings') }}
           </a>
-          <button type="button" class="menu-item" (click)="auth.logout()">
+          <button id="profile-logout" type="button" class="menu-item" (click)="auth.logout()">
             <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>{{ i18n.t('nav.logout') }}
           </button>
         </div>
       </li>
-      <li class="nav-item">
-        <button class="btn btn-link nav-link px-1 gap-1" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="menu" data-bs-placement="bottom-end" [attr.aria-label]="i18n.t('nav.toggleThemeAria', { theme: i18n.t(currentTheme().labelKey) })">
-          <i class="bi theme-icon-active" [class]="currentTheme().icon" aria-hidden="true"></i>
-          <span class="visually-hidden">{{ i18n.t('nav.toggleTheme') }}</span>
-          <i class="bi bi-chevron-expand" aria-hidden="true"></i>
-        </button>
-        <div class="menu border-keyline" id="bd-theme-menu" aria-labelledby="bd-theme" style="--bs-menu-min-width: 8rem;">
-          @for (option of themeOptions; track option.value) {
-            <button
-              type="button"
-              class="menu-item"
-              [id]="'navbar-theme-' + option.value"
-              [class.active]="theme.mode() === option.value"
-              [attr.aria-pressed]="theme.mode() === option.value"
-              (click)="theme.setMode(option.value)"
-            >
-              <i class="bi opacity-50" [class]="option.icon" aria-hidden="true"></i>{{ i18n.t(option.labelKey) }}
-              <i class="bi bi-check2 ms-auto" [class.d-none]="theme.mode() !== option.value" aria-hidden="true"></i>
-            </button>
-          }
-        </div>
-      </li>
     </ul>
-    <button class="btn-icon navbar-toggler" type="button" data-bs-toggle="drawer" data-bs-target="#navbarDrawer" aria-controls="navbarDrawer" aria-expanded="false" [attr.aria-label]="i18n.t('nav.toggleNavigation')">
+    <button id="navbar-toggler" class="btn-icon navbar-toggler" type="button" data-bs-toggle="drawer" data-bs-target="#navbarDrawer" aria-controls="navbarDrawer" aria-expanded="false" [attr.aria-label]="i18n.t('nav.toggleNavigation')">
       <span class="navbar-toggler-icon" aria-hidden="true"></span>
     </button>
     </div>
@@ -58,21 +39,58 @@
 <dialog class="drawer drawer-end" tabindex="-1" id="navbarDrawer" aria-labelledby="navbarDrawerLabel">
   <div class="drawer-header">
     <h5 class="drawer-title" id="navbarDrawerLabel">{{ i18n.t('nav.menu') }}</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="drawer" [attr.aria-label]="i18n.t('common.close')"></button>
+    <button id="drawer-close" type="button" class="btn-close" data-bs-dismiss="drawer" [attr.aria-label]="i18n.t('common.close')"></button>
   </div>
   <div class="drawer-body mb-2 md:mb-0">
     <ul class="nav navbar-nav me-auto">
       <li class="nav-item">
-          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" data-bs-dismiss="drawer"><i class="bi bi-speedometer2 me-1" aria-hidden="true"></i>{{ i18n.t('nav.dashboard') }}</a>
+          <a id="drawer-dashboard" class="nav-link" routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" data-bs-dismiss="drawer"><i class="bi bi-speedometer2 me-1" aria-hidden="true"></i>{{ i18n.t('nav.dashboard') }}</a>
       </li>
       <li class="nav-item">
-          <a class="nav-link" routerLink="/customers" routerLinkActive="active" ariaCurrentWhenActive="page" data-bs-dismiss="drawer"><i class="bi bi-people me-1" aria-hidden="true"></i>{{ i18n.t('nav.customers') }}</a>
+          <a id="drawer-customers" class="nav-link" routerLink="/customers" routerLinkActive="active" ariaCurrentWhenActive="page" data-bs-dismiss="drawer"><i class="bi bi-people me-1" aria-hidden="true"></i>{{ i18n.t('nav.customers') }}</a>
       </li>
       @if (auth.isAuthenticated()) {
         <li class="nav-item">
-          <button type="button" class="btn btn-link nav-link" data-bs-dismiss="drawer" (click)="auth.logout()"><i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>{{ i18n.t('nav.logout') }}</button>
+          <button id="drawer-logout" type="button" class="btn btn-link nav-link" data-bs-dismiss="drawer" (click)="auth.logout()"><i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>{{ i18n.t('nav.logout') }}</button>
         </li>
       }
     </ul>
+  </div>
+</dialog>
+<dialog #searchDialog class="dialog dialog-lg dialog-scrollable" aria-labelledby="navbarSearchLabel" (close)="onSearchClose()">
+  <form class="dialog-header" role="search" autocomplete="off" (submit)="$event.preventDefault()">
+    <label id="navbarSearchLabel" class="visually-hidden" for="navbar-search-input">{{ i18n.t('nav.search') }}</label>
+    <div class="input-group flex-grow-1">
+      <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+      <input #searchInput id="navbar-search-input" type="search" class="form-control" [value]="searchQuery()" (input)="onSearchInput(searchInput.value)" [placeholder]="i18n.t('nav.searchPlaceholder')" spellcheck="false">
+    </div>
+    <button id="navbar-search-close" type="button" class="btn-close" (click)="closeSearch()" [attr.aria-label]="i18n.t('common.close')"></button>
+  </form>
+  <div class="dialog-body">
+    @if (!canSearch()) {
+      <p id="navbar-search-hint" class="text-muted mb-0">{{ i18n.t('nav.searchHint') }}</p>
+    } @else if (searchLoading()) {
+      <p id="navbar-search-loading" class="text-muted mb-0">{{ i18n.t('common.loading') }}</p>
+    } @else if (searchError()) {
+      <p id="navbar-search-error" class="text-danger mb-0">{{ i18n.t('customers.loadError') }}</p>
+    } @else if (searchResults().length === 0) {
+      <p id="navbar-search-empty" class="text-muted mb-0">{{ i18n.t('nav.searchNoResults') }}</p>
+    } @else {
+      <ul id="navbar-search-results" class="list-group list-group-flush">
+        @for (customer of searchResults(); track customer.id) {
+          <li>
+            <a [id]="'navbar-search-result-' + customer.id" class="list-group-item list-group-item-action" [routerLink]="['/customers', customer.id]" (click)="closeSearch()">
+              <span class="d-block fw-semibold">{{ customer.fullName }}</span>
+              <small class="text-muted">
+                @if (customer.address) {
+                  {{ customer.address.city }} - {{ customer.address.state }} ·
+                }
+                {{ formatCpf(customer.cpf ?? '') }}
+              </small>
+            </a>
+          </li>
+        }
+      </ul>
+    }
   </div>
 </dialog>

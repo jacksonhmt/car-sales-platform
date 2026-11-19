@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable, expand, map, reduce } from 'rxjs';
 import { Customer } from '../models/customer';
 import { ApiResponse, PaginatedResponse } from '../models/api-response';
 import { environment } from '../../environments/environment';
@@ -33,6 +33,23 @@ export class CustomerService {
         'Accept-Language': 'en-US'
       }
     });
+  }
+
+  getAllCustomers(): Observable<Customer[]> {
+    const getPage = (page: number): Observable<PaginatedResponse<Customer>> =>
+      this.getCustomers(page, 100).pipe(
+        map((response) => {
+          if (!response.success || !response.data) {
+            throw new Error(response.message);
+          }
+          return response.data;
+        })
+      );
+
+    return getPage(0).pipe(
+      expand((data) => data.page + 1 < data.totalPages ? getPage(data.page + 1) : EMPTY),
+      reduce((customers, data) => customers.concat(data.content), [] as Customer[])
+    );
   }
 
   getCustomerById(id: string): Observable<ApiResponse<Customer>> {

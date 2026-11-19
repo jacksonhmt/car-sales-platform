@@ -4,8 +4,9 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, ValidatorFn, 
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../models/customer';
-import { ApiResponse } from '../../../models/api-response';
+import { ApiError, ApiResponse } from '../../../models/api-response';
 import { CustomerModalFooterService } from '../../../services/customer-modal-footer.service';
+import { CustomerFeedbackService } from '../../../services/customer-feedback.service';
 import { I18nService } from '../../../services/i18n.service';
 import { TranslationKey } from '../../../i18n';
 import { formatCpf, formatPhone, formatZipCode } from '../../../utils/formatters';
@@ -19,15 +20,16 @@ export class CustomerRegistration implements OnInit, OnDestroy {
   customerForm!: FormGroup;
   loading = false;
   submitted = false;
-  successMessage = '';
   errorMessage = '';
   fieldErrors: { [key: string]: string } = {};
+  apiErrors: ApiError[] = [];
   showAddress = false;
   customerId: string | null = null;
   private alertTimer?: ReturnType<typeof setTimeout>;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly footerService = inject(CustomerModalFooterService);
+  private readonly feedbackService = inject(CustomerFeedbackService);
   protected readonly i18n = inject(I18nService);
   @ViewChild('footer', { static: true }) footer!: TemplateRef<unknown>;
   readonly isReadOnly = this.route.snapshot.data['mode'] === 'view';
@@ -132,7 +134,6 @@ export class CustomerRegistration implements OnInit, OnDestroy {
   private scheduleAlertDismiss(): void {
     clearTimeout(this.alertTimer);
     this.alertTimer = setTimeout(() => {
-      this.successMessage = '';
       this.errorMessage = '';
     }, 5000);
   }
@@ -200,9 +201,9 @@ export class CustomerRegistration implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.submitted = true;
-    this.successMessage = '';
     this.errorMessage = '';
     this.fieldErrors = {};
+    this.apiErrors = [];
 
     if (this.customerForm.invalid) {
       this.errorMessage = this.i18n.t('form.checkForm');
@@ -240,30 +241,27 @@ export class CustomerRegistration implements OnInit, OnDestroy {
       next: (response: ApiResponse<Customer>) => {
         this.loading = false;
         if (response.success) {
-          this.successMessage = response.message || this.i18n.t('form.saved');
-          if (!this.isEditMode) {
-            this.customerForm.reset();
-            this.showAddress = false;
-            this.applyAddressValidators();
-            this.submitted = false;
-            this.fieldErrors = {};
-          }
-        } else {
-          this.errorMessage = response.message || this.i18n.t('form.genericError');
+          this.feedbackService.pendingSuccessMessage.set(response.message || this.i18n.t('form.saved'));
+          this.router.navigate(['/customers']);
+          return;
         }
-        this.scheduleAlertDismiss();
+        this.showApiError(response);
       },
       error: (error) => {
         this.loading = false;
-        if (error.error && error.error.errors) {
-          error.error.errors.forEach((err: any) => {
-            this.fieldErrors[err.field] = err.message;
-          });
-        }
-        this.errorMessage = error.error?.message || this.i18n.t('form.genericError');
-        this.scheduleAlertDismiss();
+        this.showApiError(error.error);
       }
     });
+  }
+
+  /** API errors stay on screen until the next submit, so the user can read them. */
+  private showApiError(response: Partial<ApiResponse<unknown>> | null | undefined): void {
+    clearTimeout(this.alertTimer);
+    this.errorMessage = response?.message || this.i18n.t('form.genericError');
+    this.apiErrors = (response?.errors ?? []).filter(err => !!err.field);
+    for (const err of this.apiErrors) {
+      this.fieldErrors[err.field.replace(/^address\./, '')] = err.message;
+    }
   }
 
   onReset(): void {
@@ -272,8 +270,8 @@ export class CustomerRegistration implements OnInit, OnDestroy {
     this.applyAddressValidators();
     this.submitted = false;
     this.errorMessage = '';
-    this.successMessage = '';
     this.fieldErrors = {};
+    this.apiErrors = [];
   }
 
   resetForm(): void {

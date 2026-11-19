@@ -5,12 +5,17 @@ import { Router, provideRouter } from '@angular/router';
 import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { CustomerService } from '../../../services/customer.service';
+import { CustomerFeedbackService } from '../../../services/customer-feedback.service';
 import { CustomerList } from './customer-list';
 
 describe('CustomerList', () => {
   const customerId = (index: number) => `00000000-0000-4000-8000-${index.toString(16).padStart(12, '0')}`;
   let fixture: ComponentFixture<CustomerList>;
-  let service: { getCustomers: ReturnType<typeof vi.fn>; deleteCustomer: ReturnType<typeof vi.fn> };
+  let service: {
+    getCustomers: ReturnType<typeof vi.fn>;
+    getAllCustomers: ReturnType<typeof vi.fn>;
+    deleteCustomer: ReturnType<typeof vi.fn>;
+  };
   let urlSpy: ReturnType<typeof vi.spyOn>;
 
   const page = {
@@ -35,6 +40,7 @@ describe('CustomerList', () => {
     });
     service = {
       getCustomers: vi.fn().mockReturnValue(of(page)),
+      getAllCustomers: vi.fn(() => CustomerService.prototype.getAllCustomers.call(service)),
       deleteCustomer: vi.fn().mockReturnValue(of({ success: true, message: 'Deleted.' }))
     };
 
@@ -108,6 +114,15 @@ describe('CustomerList', () => {
     expect(service.getCustomers).toHaveBeenCalledTimes(2);
     expect(dialog.open).toBe(false);
     expect(fixture.componentInstance.successMessage()).toBe('Deleted.');
+  });
+
+  it('shows a success message saved by the registration modal and clears the pending value', () => {
+    TestBed.inject(CustomerFeedbackService).pendingSuccessMessage.set('Customer saved.');
+    fixture.detectChanges();
+    TestBed.tick();
+
+    expect(fixture.componentInstance.successMessage()).toBe('Customer saved.');
+    expect(TestBed.inject(CustomerFeedbackService).pendingSuccessMessage()).toBeNull();
   });
 
   it('cancels the deletion without sending a request', () => {

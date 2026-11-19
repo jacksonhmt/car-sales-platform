@@ -1,24 +1,20 @@
 <!-- Form Card -->
 <div class="fade-in">
   <div class="card-body p-5">
-    <!-- Success Alert -->
-    <div *ngIf="successMessage" class="alert theme-success fade show border-0" role="alert">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-check-circle me-3"></i>
-        <div>
-          <h5 class="mb-0">{{ i18n.t('form.success') }}</h5>
-          <small>{{ successMessage }}</small>
-        </div>
-      </div>
-    </div>
-
     <!-- Error Alert -->
-    <div *ngIf="errorMessage" class="alert theme-danger fade show border-0" role="alert">
+    <div *ngIf="errorMessage" class="alert theme-danger fade show border-0 mb-7" role="alert">
       <div class="d-flex align-items-center">
         <i class="bi bi-exclamation-circle me-3"></i>
         <div>
           <h5 class="mb-0">{{ i18n.t('form.error') }}</h5>
           <small>{{ errorMessage }}</small>
+          @if (apiErrors.length) {
+            <ul class="mb-0 mt-1 ps-3">
+              @for (err of apiErrors; track $index) {
+                <li><small>{{ err.message }}</small></li>
+              }
+            </ul>
+          }
         </div>
       </div>
     </div>
@@ -291,13 +287,13 @@
     <small class="me-auto theme-muted">
       <i class="bi bi-info-circle"></i> {{ i18n.t('form.requiredHint') }}
     </small>
-    <button *ngIf="!isEditMode" type="reset" form="customerForm" class="btn btn-lg btn-outline theme-secondary" (click)="resetForm()">
+    <button id="customer-reset" *ngIf="!isEditMode" type="reset" form="customerForm" class="btn btn-lg btn-outline theme-secondary" (click)="resetForm()">
       <i class="bi bi-arrow-clockwise me-2"></i> {{ i18n.t('form.clear') }}
     </button>
-    <button type="button" class="btn btn-lg btn-outline theme-secondary" (click)="cancel()">
+    <button id="customer-cancel" type="button" class="btn btn-lg btn-outline theme-secondary" (click)="cancel()">
       <i class="bi bi-x-circle me-2"></i> {{ i18n.t('form.cancel') }}
     </button>
-    <button type="submit" form="customerForm" class="btn btn-lg btn-solid theme-primary" [disabled]="loading">
+    <button id="customer-submit" type="submit" form="customerForm" class="btn btn-lg btn-solid theme-primary" [disabled]="loading">
       <span *ngIf="!loading">
         <i class="bi bi-check-circle me-2"></i> {{ isEditMode ? i18n.t('form.save') : i18n.t('form.register') }}
       </span>
@@ -309,10 +305,10 @@
   </ng-container>
 
   <ng-template #viewActions>
-    <a routerLink="/customers" class="btn btn-lg btn-outline theme-secondary">
+    <a id="customer-back" routerLink="/customers" class="btn btn-lg btn-outline theme-secondary">
       <i class="bi bi-arrow-left me-2"></i> {{ i18n.t('form.back') }}
     </a>
-    <a [routerLink]="['/customers', customerId, 'edit']" class="btn btn-lg btn-solid theme-primary">
+    <a id="customer-edit-link" [routerLink]="['/customers', customerId, 'edit']" class="btn btn-lg btn-solid theme-primary">
       <i class="bi bi-pencil me-2"></i> {{ i18n.t('form.edit') }}
     </a>
   </ng-template>

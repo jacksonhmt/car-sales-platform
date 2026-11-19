@@ -9,7 +9,7 @@
       </div>
     }
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <form id="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="mb-3">
         <label for="username" class="form-label">
           {{ i18n.t('login.username') }} <span class="theme-danger">*</span>
@@ -36,7 +36,7 @@
         }
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">{{ i18n.t('login.submit') }}</button>
+      <button id="login-submit" type="submit" class="btn btn-primary w-100">{{ i18n.t('login.submit') }}</button>
     </form>
   </div>
 </div>

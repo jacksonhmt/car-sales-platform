@@ -1,18 +1,18 @@
 <div class="sidebar d-flex flex-column flex-shrink-0 p-11 bg-1 border-end">
-  <a routerLink="/dashboard" class="d-flex align-items-center mb-3 md:mb-0 md:me-auto theme-inverse text-decoration-none">
+  <a id="sidebar-brand" routerLink="/dashboard" class="d-flex align-items-center mb-3 md:mb-0 md:me-auto theme-inverse text-decoration-none">
     <i class="bi bi-bootstrap-fill me-2" style="font-size: 2rem" aria-hidden="true"></i>
     <span class="fs-xl">{{ i18n.t('nav.sidebarPlaceholder') }}</span>
   </a>
   <hr>
   <ul class="nav flex-column align-items-start mb-auto">
     <li class="nav-item">
-      <a routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link theme-inverse">
+      <a id="sidebar-dashboard" routerLink="/dashboard" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link theme-inverse">
         <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>
         {{ i18n.t('nav.dashboard') }}
       </a>
     </li>
     <li class="nav-item">
-      <a routerLink="/customers" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link theme-inverse">
+      <a id="sidebar-customers" routerLink="/customers" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-link theme-inverse">
         <i class="bi bi-people me-2" aria-hidden="true"></i>
         {{ i18n.t('nav.customers') }}
       </a>

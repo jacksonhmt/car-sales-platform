@@ -2,12 +2,12 @@ import { Component, DestroyRef, ElementRef, HostListener, OnDestroy, afterEveryR
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
-import { EMPTY, Observable, Subscription, expand, filter, map, reduce } from 'rxjs';
+import { Subscription, filter, map } from 'rxjs';
 import { CustomerService } from '../../../services/customer.service';
 import { I18nService } from '../../../services/i18n.service';
 import { CustomerModalFooterService } from '../../../services/customer-modal-footer.service';
+import { CustomerFeedbackService } from '../../../services/customer-feedback.service';
 import { Customer } from '../../../models/customer';
-import { PaginatedResponse } from '../../../models/api-response';
 import { formatCpf, formatPhone } from '../../../utils/formatters';
 
 interface CustomerFilters {
@@ -26,6 +26,7 @@ export class CustomerList implements OnDestroy {
   private readonly customerService = inject(CustomerService);
   private readonly destroyRef = inject(DestroyRef);
   readonly footerService = inject(CustomerModalFooterService);
+  private readonly feedbackService = inject(CustomerFeedbackService);
   private alertTimer?: ReturnType<typeof setTimeout>;
   private readonly modal = viewChild<ElementRef<HTMLDialogElement>>('modal');
   private readonly deleteModal = viewChild<ElementRef<HTMLDialogElement>>('deleteModal');
@@ -75,6 +76,15 @@ export class CustomerList implements OnDestroy {
   );
 
   constructor() {
+    effect(() => {
+      const message = this.feedbackService.pendingSuccessMessage();
+      if (!message) return;
+      untracked(() => {
+        this.showMessage(message, true);
+        this.feedbackService.pendingSuccessMessage.set(null);
+      });
+    });
+
     effect(() => {
       const page = this.page();
       const sort = this.nameSort();
@@ -264,7 +274,7 @@ export class CustomerList implements OnDestroy {
       this.customers.set([]);
       this.totalElements.set(0);
       this.totalPages.set(0);
-      this.loadSubscription = this.getAllCustomers().subscribe({
+      this.loadSubscription = this.customerService.getAllCustomers().subscribe({
         next: (customers) => {
           this.loading.set(false);
           this.allCustomers = customers;
@@ -293,23 +303,6 @@ export class CustomerList implements OnDestroy {
       },
       error: (error) => this.handleLoadError(error)
     });
-  }
-
-  private getAllCustomers(): Observable<Customer[]> {
-    const getPage = (page: number): Observable<PaginatedResponse<Customer>> =>
-      this.customerService.getCustomers(page, 100).pipe(
-        map((response) => {
-          if (!response.success || !response.data) {
-            throw new Error(response.message || this.i18n.t('customers.loadError'));
-          }
-          return response.data;
-        })
-      );
-
-    return getPage(0).pipe(
-      expand((data) => data.page + 1 < data.totalPages ? getPage(data.page + 1) : EMPTY),
-      reduce((customers, data) => customers.concat(data.content), [] as Customer[])
-    );
   }
 
   private normalizeName(value: string): string {

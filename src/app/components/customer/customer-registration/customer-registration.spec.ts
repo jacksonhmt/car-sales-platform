@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { CustomerRegistration } from './customer-registration';
 import { CustomerService } from '../../../services/customer.service';
+import { CustomerFeedbackService } from '../../../services/customer-feedback.service';
 import { CustomerModalFooterService } from '../../../services/customer-modal-footer.service';
 
 describe('CustomerRegistration', () => {
@@ -23,6 +24,16 @@ describe('CustomerRegistration', () => {
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
+
+  function fillValidForm(): void {
+    component['patchCustomer']({
+      fullName: 'Maria da Silva',
+      cpf: '52998224725',
+      email: 'maria@example.com',
+      phoneNumber: '11999999999',
+      birthDate: '1990-05-20'
+    });
+  }
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -79,6 +90,7 @@ describe('CustomerRegistration', () => {
     const update = vi
       .spyOn(TestBed.inject(CustomerService), 'updateCustomer')
       .mockReturnValue(of({ success: true, message: 'Saved' }));
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
 
     component.customerId = customerId;
     component['patchCustomer']({
@@ -97,6 +109,51 @@ describe('CustomerRegistration', () => {
     expect(update.mock.calls[0][1].cpf).toBe('529.982.247-25');
   });
 
+  it('should show API field errors and keep the user on the form', () => {
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(TestBed.inject(CustomerService), 'createCustomer').mockReturnValue(throwError(() => ({
+        error: {
+          success: false,
+          code: 'VALIDATION_ERROR',
+          message: 'Validation failed',
+          errors: [
+            { field: 'cpf', message: 'CPF is invalid' },
+            { field: 'address.zipCode', message: 'ZIP code is invalid' },
+            { field: null, message: 'Malformed JSON' }
+          ]
+        }
+      })));
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      fillValidForm();
+
+      component.onSubmit();
+
+      expect(navigate).not.toHaveBeenCalled();
+      expect(component.errorMessage).toBe('Validation failed');
+      expect(component.apiErrors.map(err => err.field)).toEqual(['cpf', 'address.zipCode']);
+      expect(component.getFieldError('cpf')).toBe('CPF is invalid');
+      expect(component.getFieldError('zipCode')).toBe('ZIP code is invalid');
+
+      vi.advanceTimersByTime(5000);
+      expect(component.errorMessage).toBe('Validation failed');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should show the API message when a successful response reports failure', () => {
+    vi.spyOn(TestBed.inject(CustomerService), 'createCustomer')
+      .mockReturnValue(of({ success: false, message: 'Customer already exists', errors: [] }));
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    fillValidForm();
+
+    component.onSubmit();
+
+    expect(navigate).not.toHaveBeenCalled();
+    expect(component.errorMessage).toBe('Customer already exists');
+  });
+
   it('loads and updates a customer using the UUID from the route', () => {
     vi.spyOn(TestBed.inject(ActivatedRoute).snapshot.paramMap, 'get').mockReturnValue(customerId);
     const service = TestBed.inject(CustomerService);
@@ -113,6 +170,7 @@ describe('CustomerRegistration', () => {
       }
     }));
     const updateCustomer = vi.spyOn(service, 'updateCustomer').mockReturnValue(of({ success: true, message: 'Saved' }));
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const editFixture = TestBed.createComponent(CustomerRegistration);
     editFixture.detectChanges();
 
@@ -120,6 +178,8 @@ describe('CustomerRegistration', () => {
     expect(editFixture.componentInstance.customerId).toBe(customerId);
     editFixture.componentInstance.onSubmit();
     expect(updateCustomer).toHaveBeenCalledWith(customerId, expect.objectContaining({ cpf: '529.982.247-25' }));
+    expect(navigate).toHaveBeenCalledWith(['/customers']);
+    expect(TestBed.inject(CustomerFeedbackService).pendingSuccessMessage()).toBe('Saved');
   });
 
   it('should disable the form and register the footer template in read-only mode', () => {

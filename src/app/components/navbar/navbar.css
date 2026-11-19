@@ -13,3 +13,20 @@
   flex: 0 1 420px;
   width: 100%;
 }
+
+.navbar-search-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-lg);
+  background: var(--bs-body-bg);
+  color: var(--bs-secondary-color);
+  text-align: start;
+}
+
+.navbar-search-trigger-label {
+  flex: 1;
+}
