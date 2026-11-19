@@ -6,7 +6,7 @@
       <div class="d-flex align-items-center">
         <i class="bi bi-check-circle me-3"></i>
         <div>
-          <h5 class="mb-0">Success!</h5>
+          <h5 class="mb-0">{{ i18n.t('form.success') }}</h5>
           <small>{{ successMessage }}</small>
         </div>
       </div>
@@ -17,7 +17,7 @@
       <div class="d-flex align-items-center">
         <i class="bi bi-exclamation-circle me-3"></i>
         <div>
-          <h5 class="mb-0">Error!</h5>
+          <h5 class="mb-0">{{ i18n.t('form.error') }}</h5>
           <small>{{ errorMessage }}</small>
         </div>
       </div>
@@ -31,23 +31,23 @@
           <div class="badge bg-primary rounded-pill p-2 me-3">
             <i class="bi bi-person"></i>
           </div>
-          <h4 class="mb-0 fw-bold">Personal Information</h4>
+          <h4 class="mb-0 fw-bold">{{ i18n.t('form.personal') }}</h4>
         </div>
 
         <div class="row g-3">
           <!-- Full Name -->
           <div class="col-12">
             <label for="fullName" class="form-label">
-              Full Name <span class="theme-danger">*</span>
+              {{ i18n.t('form.fullName') }} <span class="theme-danger">*</span>
             </label>
-            <input type="text" id="fullName" formControlName="fullName" placeholder="Enter your full name"
+            <input type="text" id="fullName" formControlName="fullName" [placeholder]="i18n.t('form.fullNamePlaceholder')"
               maxlength="150" class="form-control" [class.is-invalid]="submitted && f['fullName'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && f['fullName'].invalid">
               <small *ngIf="f['fullName'].errors?.['required']">
-                <i class="bi bi-exclamation-circle"></i> Full name is required.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.fullNameRequired') }}
               </small>
               <small *ngIf="f['fullName'].errors?.['minlength']">
-                <i class="bi bi-exclamation-circle"></i> Full name must be at least 3 characters.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.fullNameMin') }}
               </small>
               <small *ngIf="getFieldError('fullName')">
                 <i class="bi bi-exclamation-circle"></i> {{ getFieldError('fullName') }}
@@ -58,16 +58,16 @@
           <!-- CPF -->
           <div class="md:col-6">
             <label for="cpf" class="form-label">
-              CPF <span class="theme-danger">*</span>
+              {{ i18n.t('form.cpf') }} <span class="theme-danger">*</span>
             </label>
             <input type="text" id="cpf" formControlName="cpf" (input)="applyMask('cpf')" placeholder="000.000.000-00"
               class="form-control" [class.is-invalid]="submitted && f['cpf'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && f['cpf'].invalid">
               <small *ngIf="f['cpf'].errors?.['required']">
-                <i class="bi bi-exclamation-circle"></i> CPF is required.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.cpfRequired') }}
               </small>
               <small *ngIf="f['cpf'].errors?.['pattern']">
-                <i class="bi bi-exclamation-circle"></i> Format: 000.000.000-00
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.cpfFormat') }}
               </small>
               <small *ngIf="getFieldError('cpf')">
                 <i class="bi bi-exclamation-circle"></i> {{ getFieldError('cpf') }}
@@ -78,16 +78,16 @@
           <!-- Email -->
           <div class="md:col-6">
             <label for="email" class="form-label">
-              Email <span class="theme-danger">*</span>
+              {{ i18n.t('form.email') }} <span class="theme-danger">*</span>
             </label>
             <input type="email" id="email" formControlName="email" placeholder="user@example.com" maxlength="150"
               class="form-control" [class.is-invalid]="submitted && f['email'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && f['email'].invalid">
               <small *ngIf="f['email'].errors?.['required']">
-                <i class="bi bi-exclamation-circle"></i> Email is required.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.emailRequired') }}
               </small>
               <small *ngIf="f['email'].errors?.['email']">
-                <i class="bi bi-exclamation-circle"></i> Email format is invalid.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.emailInvalid') }}
               </small>
               <small *ngIf="getFieldError('email')">
                 <i class="bi bi-exclamation-circle"></i> {{ getFieldError('email') }}
@@ -98,17 +98,17 @@
           <!-- Phone Number -->
           <div class="md:col-6">
             <label for="phoneNumber" class="form-label">
-              Phone Number <span class="theme-danger">*</span>
+              {{ i18n.t('form.phone') }} <span class="theme-danger">*</span>
             </label>
             <input type="tel" id="phoneNumber" formControlName="phoneNumber" (input)="applyMask('phoneNumber')"
               placeholder="(11) 99999-9999" class="form-control"
               [class.is-invalid]="submitted && f['phoneNumber'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && f['phoneNumber'].invalid">
               <small *ngIf="f['phoneNumber'].errors?.['required']">
-                <i class="bi bi-exclamation-circle"></i> Phone is required.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.phoneRequired') }}
               </small>
               <small *ngIf="f['phoneNumber'].errors?.['pattern']">
-                <i class="bi bi-exclamation-circle"></i> Format: (11) 99999-9999
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.phoneFormat') }}
               </small>
               <small *ngIf="getFieldError('phoneNumber')">
                 <i class="bi bi-exclamation-circle"></i> {{ getFieldError('phoneNumber') }}
@@ -119,14 +119,14 @@
           <!-- Additional Phone -->
           <div class="md:col-6">
             <label for="additionalPhone" class="form-label">
-              Additional Phone
+              {{ i18n.t('form.additionalPhone') }}
             </label>
             <input type="tel" id="additionalPhone" formControlName="additionalPhone"
-              (input)="applyMask('additionalPhone')" placeholder="(11) 98888-8888 (optional)" class="form-control"
+              (input)="applyMask('additionalPhone')" [placeholder]="i18n.t('form.additionalPhonePlaceholder')" class="form-control"
               [class.is-invalid]="submitted && f['additionalPhone'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && f['additionalPhone'].invalid">
               <small *ngIf="f['additionalPhone'].errors?.['pattern']">
-                <i class="bi bi-exclamation-circle"></i> Format: (11) 99999-9999
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.phoneFormat') }}
               </small>
             </div>
           </div>
@@ -134,13 +134,13 @@
           <!-- Birth Date -->
           <div class="md:col-6">
             <label for="birthDate" class="form-label">
-              Birth Date <span class="theme-danger">*</span>
+              {{ i18n.t('form.birthDate') }} <span class="theme-danger">*</span>
             </label>
             <input type="date" id="birthDate" formControlName="birthDate" class="form-control"
               [class.is-invalid]="submitted && f['birthDate'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && f['birthDate'].invalid">
               <small *ngIf="f['birthDate'].errors?.['required']">
-                <i class="bi bi-exclamation-circle"></i> Birth date is required.
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.birthDateRequired') }}
               </small>
               <small *ngIf="getFieldError('birthDate')">
                 <i class="bi bi-exclamation-circle"></i> {{ getFieldError('birthDate') }}
@@ -151,12 +151,12 @@
           <!-- Gender -->
           <div class="md:col-6">
             <div class="form-field">
-              <label for="gender" class="form-label">Gender</label>
+              <label for="gender" class="form-label">{{ i18n.t('form.gender') }}</label>
               <select id="gender" formControlName="gender" class="form-control"
                 [class.is-invalid]="submitted && f['gender'].invalid">
-                <option value="">Select gender</option>
+                <option value="">{{ i18n.t('form.selectGender') }}</option>
                 <option *ngFor="let option of genderOptions" [value]="option.value">
-                  {{ option.label }}
+                  {{ i18n.t(option.labelKey) }}
                 </option>
               </select>
             </div>
@@ -170,14 +170,14 @@
           <div class="badge bg-success rounded-pill p-2 me-3">
             <i class="bi bi-geo-alt"></i>
           </div>
-          <h4 class="mb-0 fw-bold">Address <span class="badge ms-2">Optional</span></h4>
+          <h4 class="mb-0 fw-bold">{{ i18n.t('form.address') }} <span class="badge ms-2">{{ i18n.t('form.optional') }}</span></h4>
         </div>
 
         <!-- Address Checkbox -->
         <div class="mb-4 form-field">
           <input type="checkbox" id="includeAddress" class="check" [checked]="showAddress" [disabled]="isReadOnly" (change)="toggleAddress()" />
           <label for="includeAddress">
-            Include address information
+            {{ i18n.t('form.includeAddress') }}
           </label>
         </div>
 
@@ -186,7 +186,7 @@
           <!-- Zip Code -->
           <div class="md:col-3">
             <label for="zipCode" class="form-label">
-              Zip Code <span *ngIf="showAddress" class="theme-danger">*</span>
+              {{ i18n.t('form.zipCode') }} <span *ngIf="showAddress" class="theme-danger">*</span>
             </label>
             <input type="text" id="zipCode" formControlName="zipCode" (input)="applyMask('zipCode')"
               placeholder="00000-000" class="form-control"
@@ -196,7 +196,7 @@
                 <i class="bi bi-exclamation-circle"></i> {{ errorText('zipCode') }}
               </small>
               <small *ngIf="f['zipCode'].errors?.['pattern']">
-                <i class="bi bi-exclamation-circle"></i> Format: 00000-000
+                <i class="bi bi-exclamation-circle"></i> {{ i18n.t('form.zipCodeFormat') }}
               </small>
             </div>
           </div>
@@ -204,9 +204,9 @@
           <!-- Street -->
           <div class="md:col-9">
             <label for="street" class="form-label">
-              Street <span *ngIf="showAddress" class="theme-danger">*</span>
+              {{ i18n.t('form.street') }} <span *ngIf="showAddress" class="theme-danger">*</span>
             </label>
-            <input type="text" id="street" formControlName="street" placeholder="Street name" maxlength="150"
+            <input type="text" id="street" formControlName="street" [placeholder]="i18n.t('form.streetPlaceholder')" maxlength="150"
               class="form-control" [class.is-invalid]="submitted && showAddress && f['street'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['street'].invalid">
               <small><i class="bi bi-exclamation-circle"></i> {{ errorText('street') }}</small>
@@ -216,9 +216,9 @@
           <!-- Number -->
           <div class="md:col-3">
             <label for="number" class="form-label">
-              Number <span *ngIf="showAddress" class="theme-danger">*</span>
+              {{ i18n.t('form.number') }} <span *ngIf="showAddress" class="theme-danger">*</span>
             </label>
-            <input type="text" id="number" formControlName="number" placeholder="Number" maxlength="20"
+            <input type="text" id="number" formControlName="number" [placeholder]="i18n.t('form.numberPlaceholder')" maxlength="20"
               class="form-control" [class.is-invalid]="submitted && showAddress && f['number'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['number'].invalid">
               <small><i class="bi bi-exclamation-circle"></i> {{ errorText('number') }}</small>
@@ -228,9 +228,9 @@
           <!-- Neighborhood -->
           <div class="md:col-9">
             <label for="neighborhood" class="form-label">
-              Neighborhood <span *ngIf="showAddress" class="theme-danger">*</span>
+              {{ i18n.t('form.neighborhood') }} <span *ngIf="showAddress" class="theme-danger">*</span>
             </label>
-            <input type="text" id="neighborhood" formControlName="neighborhood" placeholder="Neighborhood"
+            <input type="text" id="neighborhood" formControlName="neighborhood" [placeholder]="i18n.t('form.neighborhoodPlaceholder')"
               maxlength="100" class="form-control"
               [class.is-invalid]="submitted && showAddress && f['neighborhood'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['neighborhood'].invalid">
@@ -242,11 +242,11 @@
           <div class="md:col-3">
             <div class="form-field">
               <label for="state" class="form-label">
-                State <span *ngIf="showAddress" class="theme-danger">*</span>
+                {{ i18n.t('form.state') }} <span *ngIf="showAddress" class="theme-danger">*</span>
               </label>
               <select id="state" formControlName="state" class="form-control"
                 [class.is-invalid]="submitted && showAddress && f['state'].invalid">
-                <option value="">Select a state</option>
+                <option value="">{{ i18n.t('form.selectState') }}</option>
                 <option *ngFor="let state of brazilianStates" [value]="state">
                   {{ state }}
                 </option>
@@ -260,9 +260,9 @@
           <!-- City -->
           <div class="md:col-9">
             <label for="city" class="form-label">
-              City <span *ngIf="showAddress" class="theme-danger">*</span>
+              {{ i18n.t('form.city') }} <span *ngIf="showAddress" class="theme-danger">*</span>
             </label>
-            <input type="text" id="city" formControlName="city" placeholder="City" maxlength="100" class="form-control"
+            <input type="text" id="city" formControlName="city" [placeholder]="i18n.t('form.cityPlaceholder')" maxlength="100" class="form-control"
               [class.is-invalid]="submitted && showAddress && f['city'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['city'].invalid">
               <small><i class="bi bi-exclamation-circle"></i> {{ errorText('city') }}</small>
@@ -272,9 +272,9 @@
           <!-- Complement -->
           <div class="md:col-12">
             <label for="complement" class="form-label">
-              Complement
+              {{ i18n.t('form.complement') }}
             </label>
-            <input type="text" id="complement" formControlName="complement" placeholder="Apt, Suite, etc (optional)"
+            <input type="text" id="complement" formControlName="complement" [placeholder]="i18n.t('form.complementPlaceholder')"
               maxlength="100" class="form-control"
               [class.is-invalid]="submitted && showAddress && f['complement'].invalid" />
             <div class="invalid-feedback d-block" *ngIf="submitted && showAddress && f['complement'].invalid">
@@ -289,31 +289,31 @@
 <ng-template #footer>
   <ng-container *ngIf="!isReadOnly; else viewActions">
     <small class="me-auto theme-muted">
-      <i class="bi bi-info-circle"></i> All fields marked with <span class="theme-danger">*</span> are required
+      <i class="bi bi-info-circle"></i> {{ i18n.t('form.requiredHint') }}
     </small>
     <button *ngIf="!isEditMode" type="reset" form="customerForm" class="btn btn-lg btn-outline theme-secondary" (click)="resetForm()">
-      <i class="bi bi-arrow-clockwise me-2"></i> Clear
+      <i class="bi bi-arrow-clockwise me-2"></i> {{ i18n.t('form.clear') }}
     </button>
     <button type="button" class="btn btn-lg btn-outline theme-secondary" (click)="cancel()">
-      <i class="bi bi-x-circle me-2"></i> Cancel
+      <i class="bi bi-x-circle me-2"></i> {{ i18n.t('form.cancel') }}
     </button>
     <button type="submit" form="customerForm" class="btn btn-lg btn-solid theme-primary" [disabled]="loading">
       <span *ngIf="!loading">
-        <i class="bi bi-check-circle me-2"></i> {{ isEditMode ? 'Save Changes' : 'Register Customer' }}
+        <i class="bi bi-check-circle me-2"></i> {{ isEditMode ? i18n.t('form.save') : i18n.t('form.register') }}
       </span>
       <span *ngIf="loading">
         <span class="spinner-border spinner-sm me-2" role="status" aria-hidden="true"></span>
-        Processing...
+        {{ i18n.t('common.processing') }}
       </span>
     </button>
   </ng-container>
 
   <ng-template #viewActions>
     <a routerLink="/customers" class="btn btn-lg btn-outline theme-secondary">
-      <i class="bi bi-arrow-left me-2"></i> Back
+      <i class="bi bi-arrow-left me-2"></i> {{ i18n.t('form.back') }}
     </a>
     <a [routerLink]="['/customers', customerId, 'edit']" class="btn btn-lg btn-solid theme-primary">
-      <i class="bi bi-pencil me-2"></i> Edit
+      <i class="bi bi-pencil me-2"></i> {{ i18n.t('form.edit') }}
     </a>
   </ng-template>
 </ng-template>

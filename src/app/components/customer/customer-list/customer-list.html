@@ -1,8 +1,8 @@
 <div class="d-flex align-items-center justify-content-between mb-4">
-  <h2 class="fw-bold theme-primary mb-0">Customers</h2>
+  <h2 class="fw-bold theme-primary mb-0">{{ i18n.t('customers.title') }}</h2>
   <a routerLink="/customers/new" class="btn btn-solid theme-primary">
     <i class="bi bi-plus-lg me-2"></i>
-    Create
+    {{ i18n.t('customers.create') }}
   </a>
 </div>
 
@@ -11,8 +11,8 @@
     <form novalidate (submit)="searchCustomers(nameFilter.value, cpfFilter.value); $event.preventDefault()">
       <div class="row">
         <div class="col-6">
-          <label for="customer-name-filter" class="form-label">Name</label>
-          <input #nameFilter id="customer-name-filter" class="form-control" type="text" placeholder="Customer name"
+          <label for="customer-name-filter" class="form-label">{{ i18n.t('customers.filterName') }}</label>
+          <input #nameFilter id="customer-name-filter" class="form-control" type="text" [placeholder]="i18n.t('customers.filterNamePlaceholder')"
             required minlength="3" maxlength="150" [class.is-invalid]="nameFilterError()"
             [attr.aria-invalid]="nameFilterError() ? 'true' : null"
             [attr.aria-describedby]="nameFilterError() ? 'customer-name-filter-error' : null"
@@ -23,18 +23,18 @@
           }
         </div>
         <div class="col-6">
-          <label for="customer-cpf-filter" class="form-label">CPF</label>
+          <label for="customer-cpf-filter" class="form-label">{{ i18n.t('customers.filterCpf') }}</label>
           <input #cpfFilter id="customer-cpf-filter" class="form-control" type="text" inputmode="numeric" maxlength="14"
             placeholder="000.000.000-00" (input)="cpfFilter.value = formatCpf(cpfFilter.value)">
         </div>
       </div>
       <div class="filter-actions mt-5">
         <button type="submit" class="btn btn-solid theme-primary">
-          <i class="bi bi-search"></i>Search
+          <i class="bi bi-search"></i>{{ i18n.t('customers.search') }}
         </button>
         <button type="button" class="btn btn-outline theme-secondary"
           (click)="nameFilter.value = ''; cpfFilter.value = ''; clearFilters()">
-          <i class="bi bi-eraser"></i> Clear
+          <i class="bi bi-eraser"></i> {{ i18n.t('customers.clear') }}
         </button>
       </div>
     </form>
@@ -59,16 +59,16 @@
             <th scope="col"
               [attr.aria-sort]="nameSort() === 'asc' ? 'ascending' : nameSort() === 'desc' ? 'descending' : 'none'">
               <button type="button" class="name-sort" (click)="toggleNameSort()" [disabled]="loading()"
-                [attr.aria-label]="nameSort() === 'asc' ? 'Sort customers by name descending' : 'Sort customers by name ascending'">
-                Name
+                [attr.aria-label]="nameSort() === 'asc' ? i18n.t('customers.sortDesc') : i18n.t('customers.sortAsc')">
+                {{ i18n.t('customers.colName') }}
                 <i class="bi" [class.bi-arrow-down-up]="!nameSort()" [class.bi-sort-alpha-down]="nameSort() === 'asc'"
                   [class.bi-sort-alpha-down-alt]="nameSort() === 'desc'" aria-hidden="true"></i>
               </button>
             </th>
-            <th scope="col" class="cpf-column">CPF</th>
-            <th scope="col" class="email-column">Email</th>
-            <th scope="col" class="phone-column">Phone</th>
-            <th scope="col" class="actions-column text-end">Actions</th>
+            <th scope="col" class="cpf-column">{{ i18n.t('customers.colCpf') }}</th>
+            <th scope="col" class="email-column">{{ i18n.t('customers.colEmail') }}</th>
+            <th scope="col" class="phone-column">{{ i18n.t('customers.colPhone') }}</th>
+            <th scope="col" class="actions-column text-end">{{ i18n.t('customers.colActions') }}</th>
           </tr>
         </thead>
         <tbody #tableBody>
@@ -93,8 +93,8 @@
           } @empty {
           <tr>
             <td colspan="5" class="text-center theme-muted py-4">
-              @if (loading()) { Loading customers... } @else if (loadError()) { Unable to load customers. }
-              @else if (hasFilters()) { No customers match your filters. } @else { No customers registered yet. }
+              @if (loading()) { {{ i18n.t('customers.loading') }} } @else if (loadError()) { {{ i18n.t('customers.loadError') }} }
+              @else if (hasFilters()) { {{ i18n.t('customers.noMatch') }} } @else { {{ i18n.t('customers.empty') }} }
             </td>
           </tr>
           }
@@ -104,15 +104,15 @@
 
     <ng-template #customerActions let-customer>
       <div class="d-inline-flex gap-2">
-        <a [routerLink]="['/customers', customer.id]" class="btn btn-sm btn-outline theme-primary" title="View"
-          aria-label="View customer">
+        <a [routerLink]="['/customers', customer.id]" class="btn btn-sm btn-outline theme-primary" [title]="i18n.t('customers.view')"
+          [attr.aria-label]="i18n.t('customers.viewAria')">
           <i class="bi bi-eye"></i>
         </a>
-        <a [routerLink]="['/customers', customer.id, 'edit']" class="btn btn-sm btn-outline theme-primary" title="Edit"
-          aria-label="Edit customer">
+        <a [routerLink]="['/customers', customer.id, 'edit']" class="btn btn-sm btn-outline theme-primary" [title]="i18n.t('customers.edit')"
+          [attr.aria-label]="i18n.t('customers.editAria')">
           <i class="bi bi-pencil"></i>
         </a>
-        <button type="button" class="btn btn-sm btn-outline theme-danger" title="Delete" aria-label="Delete customer"
+        <button type="button" class="btn btn-sm btn-outline theme-danger" [title]="i18n.t('common.delete')" [attr.aria-label]="i18n.t('customers.deleteAria')"
           (click)="openDeleteModal(customer)">
           <i class="bi bi-trash"></i>
         </button>
@@ -120,13 +120,13 @@
     </ng-template>
 
     <div #pagination data-pagination class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-      <small class="theme-muted">Total: {{ totalElements() }}</small>
+      <small class="theme-muted">{{ i18n.t('customers.total') }}: {{ totalElements() }}</small>
       <div class="d-flex align-items-center gap-2">
         <button type="button" class="btn btn-outline theme-secondary" [disabled]="loading() || page() === 0"
-          (click)="goToPage(page() - 1)">Previous</button>
+          (click)="goToPage(page() - 1)">{{ i18n.t('customers.previous') }}</button>
         <span class="small">{{ pageLabel() }}</span>
         <button type="button" class="btn btn-outline theme-secondary"
-          [disabled]="loading() || page() + 1 >= totalPages()" (click)="goToPage(page() + 1)">Next</button>
+          [disabled]="loading() || page() + 1 >= totalPages()" (click)="goToPage(page() + 1)">{{ i18n.t('customers.next') }}</button>
       </div>
     </div>
   </div>
@@ -140,7 +140,7 @@
       </div>
       <h4 class="mb-0 fw-bold">{{ modalTitle() }}</h4>
     </div>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    <button type="button" class="btn-close" [attr.aria-label]="i18n.t('common.close')" (click)="closeModal()"></button>
   </div>
   <div class="dialog-body">
     <router-outlet />
@@ -159,13 +159,13 @@
       <div class="badge theme-danger rounded-pill p-2 me-3">
         <i class="bi bi-trash" aria-hidden="true"></i>
       </div>
-      <h4 id="deleteModalTitle" class="mb-0 fw-bold">Delete customer</h4>
+      <h4 id="deleteModalTitle" class="mb-0 fw-bold">{{ i18n.t('customers.deleteTitle') }}</h4>
     </div>
-    <button type="button" class="btn-close" aria-label="Close" [disabled]="deleting()"
+    <button type="button" class="btn-close" [attr.aria-label]="i18n.t('common.close')" [disabled]="deleting()"
       (click)="closeDeleteModal()"></button>
   </div>
   <div class="dialog-body">
-    <p id="deleteModalDescription">Delete <strong>{{ customerToDelete()?.fullName }}</strong>? This cannot be undone.
+    <p id="deleteModalDescription">{{ i18n.t('customers.deleteConfirm', { name: customerToDelete()?.fullName ?? '' }) }}
     </p>
     @if (deleteError()) {
     <div class="alert theme-danger" role="alert">{{ deleteError() }}</div>
@@ -174,11 +174,11 @@
   <div class="dialog-footer">
     <button type="button" class="btn btn-lg btn-outline theme-secondary" autofocus [disabled]="deleting()"
       (click)="closeDeleteModal()">
-      <i class="bi bi-x-circle me-2" aria-hidden="true"></i> Cancel
+      <i class="bi bi-x-circle me-2" aria-hidden="true"></i> {{ i18n.t('common.cancel') }}
     </button>
     <button type="button" class="btn btn-lg btn-solid theme-danger" [disabled]="deleting() || !customerToDelete()"
       (click)="confirmDelete()">
-      <i class="bi bi-trash me-2" aria-hidden="true"></i> {{ deleting() ? 'Deleting...' : 'Delete' }}
+      <i class="bi bi-trash me-2" aria-hidden="true"></i> {{ deleting() ? i18n.t('customers.deleting') : i18n.t('common.delete') }}
     </button>
   </div>
 </dialog>

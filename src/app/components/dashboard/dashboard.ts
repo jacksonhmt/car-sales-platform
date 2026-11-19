@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
+import { I18nService } from '../../services/i18n.service';
 
 @Component({
   imports: [RouterLink],
@@ -9,6 +10,7 @@ import { CustomerService } from '../../services/customer.service';
 })
 export class Dashboard implements OnInit {
   private readonly customerService = inject(CustomerService);
+  protected readonly i18n = inject(I18nService);
 
   readonly totalCustomers = signal<number | null>(null);
   readonly loadError = signal(false);

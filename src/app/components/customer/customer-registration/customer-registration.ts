@@ -6,6 +6,8 @@ import { CustomerService } from '../../../services/customer.service';
 import { Customer } from '../../../models/customer';
 import { ApiResponse } from '../../../models/api-response';
 import { CustomerModalFooterService } from '../../../services/customer-modal-footer.service';
+import { I18nService } from '../../../services/i18n.service';
+import { TranslationKey } from '../../../i18n';
 import { formatCpf, formatPhone, formatZipCode } from '../../../utils/formatters';
 
 @Component({
@@ -26,14 +28,15 @@ export class CustomerRegistration implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly footerService = inject(CustomerModalFooterService);
+  protected readonly i18n = inject(I18nService);
   @ViewChild('footer', { static: true }) footer!: TemplateRef<unknown>;
   readonly isReadOnly = this.route.snapshot.data['mode'] === 'view';
 
-  genderOptions = [
-    { value: 'MALE', label: 'Male' },
-    { value: 'FEMALE', label: 'Female' },
-    { value: 'OTHER', label: 'Other' },
-    { value: 'PREFER_NOT_TO_SAY', label: 'Prefer not to say' }
+  genderOptions: { value: string; labelKey: TranslationKey }[] = [
+    { value: 'MALE', labelKey: 'form.gender.MALE' },
+    { value: 'FEMALE', labelKey: 'form.gender.FEMALE' },
+    { value: 'OTHER', labelKey: 'form.gender.OTHER' },
+    { value: 'PREFER_NOT_TO_SAY', labelKey: 'form.gender.PREFER_NOT_TO_SAY' }
   ];
 
   brazilianStates = [
@@ -82,7 +85,7 @@ export class CustomerRegistration implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.loading = false;
-        this.errorMessage = error.error?.message || 'Customer not found.';
+        this.errorMessage = error.error?.message || this.i18n.t('form.notFound');
         this.scheduleAlertDismiss();
       }
     });
@@ -167,8 +170,8 @@ export class CustomerRegistration implements OnInit, OnDestroy {
   errorText(field: string): string {
     const errors = this.customerForm.get(field)?.errors;
     if (!errors) return '';
-    if (errors['required']) return 'This field is required.';
-    if (errors['pattern']) return 'Invalid format.';
+    if (errors['required']) return this.i18n.t('common.required');
+    if (errors['pattern']) return this.i18n.t('common.invalidFormat');
     return '';
   }
 
@@ -202,7 +205,7 @@ export class CustomerRegistration implements OnInit, OnDestroy {
     this.fieldErrors = {};
 
     if (this.customerForm.invalid) {
-      this.errorMessage = 'Please check the form for errors.';
+      this.errorMessage = this.i18n.t('form.checkForm');
       this.scheduleAlertDismiss();
       return;
     }
@@ -237,7 +240,7 @@ export class CustomerRegistration implements OnInit, OnDestroy {
       next: (response: ApiResponse<Customer>) => {
         this.loading = false;
         if (response.success) {
-          this.successMessage = response.message || 'Customer saved successfully!';
+          this.successMessage = response.message || this.i18n.t('form.saved');
           if (!this.isEditMode) {
             this.customerForm.reset();
             this.showAddress = false;
@@ -246,7 +249,7 @@ export class CustomerRegistration implements OnInit, OnDestroy {
             this.fieldErrors = {};
           }
         } else {
-          this.errorMessage = response.message || 'An error occurred during registration.';
+          this.errorMessage = response.message || this.i18n.t('form.genericError');
         }
         this.scheduleAlertDismiss();
       },
@@ -257,7 +260,7 @@ export class CustomerRegistration implements OnInit, OnDestroy {
             this.fieldErrors[err.field] = err.message;
           });
         }
-        this.errorMessage = error.error?.message || 'An error occurred during registration.';
+        this.errorMessage = error.error?.message || this.i18n.t('form.genericError');
         this.scheduleAlertDismiss();
       }
     });

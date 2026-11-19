@@ -1,9 +1,13 @@
-<app-navbar></app-navbar>
-<div class="app-layout">
-  <app-sidebar class="d-none md:d-flex"></app-sidebar>
-  <div class="container-fluid py-5">
-    <main class="app-main">
-      <router-outlet></router-outlet>
-    </main>
+@if (isLoginPage()) {
+  <router-outlet></router-outlet>
+} @else {
+  <app-navbar></app-navbar>
+  <div class="app-layout">
+    <app-sidebar class="d-none md:d-flex"></app-sidebar>
+    <div class="container-fluid py-5">
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
   </div>
-</div>
+}

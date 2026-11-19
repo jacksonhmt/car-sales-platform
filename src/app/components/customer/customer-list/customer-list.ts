@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { NgTemplateOutlet } from '@angular/common';
 import { EMPTY, Observable, Subscription, expand, filter, map, reduce } from 'rxjs';
 import { CustomerService } from '../../../services/customer.service';
+import { I18nService } from '../../../services/i18n.service';
 import { CustomerModalFooterService } from '../../../services/customer-modal-footer.service';
 import { Customer } from '../../../models/customer';
 import { PaginatedResponse } from '../../../models/api-response';
@@ -30,6 +31,7 @@ export class CustomerList implements OnDestroy {
   private readonly deleteModal = viewChild<ElementRef<HTMLDialogElement>>('deleteModal');
   private readonly tableBody = viewChild<ElementRef<HTMLTableSectionElement>>('tableBody');
   private readonly pagination = viewChild<ElementRef<HTMLElement>>('pagination');
+  protected readonly i18n = inject(I18nService);
   private readonly nameCollator = new Intl.Collator('pt-BR', { sensitivity: 'base', numeric: true });
   private loadSubscription?: Subscription;
   private resizeObserver?: ResizeObserver;
@@ -64,11 +66,13 @@ export class CustomerList implements OnDestroy {
   readonly isModalRoute = computed(() => this.currentUrl().split('?')[0].startsWith('/customers/'));
   readonly modalTitle = computed(() => {
     const path = this.currentUrl().split('?')[0];
-    if (path.endsWith('/new')) return 'New customer';
-    if (path.endsWith('/edit')) return 'Edit customer';
-    return 'Customer details';
+    if (path.endsWith('/new')) return this.i18n.t('customers.modalNew');
+    if (path.endsWith('/edit')) return this.i18n.t('customers.modalEdit');
+    return this.i18n.t('customers.modalDetails');
   });
-  readonly pageLabel = computed(() => `Page ${this.page() + 1} of ${Math.max(this.totalPages(), 1)}`);
+  readonly pageLabel = computed(() =>
+    this.i18n.t('customers.pageOf', { page: this.page() + 1, total: Math.max(this.totalPages(), 1) })
+  );
 
   constructor() {
     effect(() => {
@@ -136,7 +140,7 @@ export class CustomerList implements OnDestroy {
 
   maskCpf(value: string | null | undefined): string {
     const match = value?.match(/^(\d{3})(?:\d{6}|\.\d{3}\.\d{3}-)(\d{2})$/);
-    return match ? `${match[1]}.***.***-${match[2]}` : 'Unavailable';
+    return match ? `${match[1]}.***.***-${match[2]}` : this.i18n.t('customers.unavailable');
   }
 
   goToPage(page: number): void {
@@ -173,7 +177,7 @@ export class CustomerList implements OnDestroy {
   searchCustomers(name: string, cpf: string): void {
     const trimmedName = name.trim();
     if (trimmedName.length < 3 || name.length > 150) {
-      this.nameFilterError.set('Enter a name between 3 and 150 characters.');
+      this.nameFilterError.set(this.i18n.t('customers.nameInvalid'));
       return;
     }
     this.nameFilterError.set('');
@@ -194,7 +198,7 @@ export class CustomerList implements OnDestroy {
 
   openDeleteModal(customer: Customer): void {
     if (customer.id === undefined) {
-      this.showMessage('Cannot delete a customer without an ID.', false);
+      this.showMessage(this.i18n.t('customers.deleteNoId'), false);
       return;
     }
     this.customerToDelete.set(customer);
@@ -219,7 +223,7 @@ export class CustomerList implements OnDestroy {
     const customer = this.customerToDelete();
     if (this.deleting()) return;
     if (!customer || customer.id === undefined) {
-      this.deleteError.set('Select a customer to delete.');
+      this.deleteError.set(this.i18n.t('customers.deleteSelect'));
       return;
     }
 
@@ -229,17 +233,17 @@ export class CustomerList implements OnDestroy {
       next: (response) => {
         this.deleting.set(false);
         if (!response.success) {
-          this.deleteError.set(response.message || 'Could not delete the customer.');
+          this.deleteError.set(response.message || this.i18n.t('customers.deleteFailed'));
           return;
         }
         this.closeDeleteModal();
-        this.showMessage(response.message || 'Customer deleted successfully.', true);
+        this.showMessage(response.message || this.i18n.t('customers.deleteSuccess'), true);
         this.allCustomers = null;
         this.loadPage(this.page(), this.nameSort(), this.pageSize(), this.filters());
       },
       error: (error) => {
         this.deleting.set(false);
-        this.deleteError.set(error.error?.message || 'Could not delete the customer.');
+        this.deleteError.set(error.error?.message || this.i18n.t('customers.deleteFailed'));
       }
     });
   }
@@ -277,7 +281,7 @@ export class CustomerList implements OnDestroy {
         const data = response.data;
         if (!response.success || !data) {
           this.loadError.set(true);
-          this.showMessage(response.message || 'Could not load customers.', false);
+          this.showMessage(response.message || this.i18n.t('customers.loadError'), false);
           return;
         }
         this.customers.set(data.content);
@@ -296,7 +300,7 @@ export class CustomerList implements OnDestroy {
       this.customerService.getCustomers(page, 100).pipe(
         map((response) => {
           if (!response.success || !response.data) {
-            throw new Error(response.message || 'Could not load customers.');
+            throw new Error(response.message || this.i18n.t('customers.loadError'));
           }
           return response.data;
         })
@@ -335,7 +339,7 @@ export class CustomerList implements OnDestroy {
   private handleLoadError(error: { error?: { message?: string }; message?: string }): void {
     this.loading.set(false);
     this.loadError.set(true);
-    this.showMessage(error.error?.message || error.message || 'Could not load customers.', false);
+    this.showMessage(error.error?.message || error.message || this.i18n.t('customers.loadError'), false);
   }
 
   private showMessage(message: string, success: boolean): void {

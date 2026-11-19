@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { Navbar } from './components/navbar/navbar';
 import { Sidebar } from './components/sidebar/sidebar';
 
@@ -10,4 +12,13 @@ import { Sidebar } from './components/sidebar/sidebar';
   templateUrl: './app.html',
 })
 export class App {
+  private readonly router = inject(Router);
+
+  readonly isLoginPage = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map((event) => event.urlAfterRedirects.startsWith('/login'))
+    ),
+    { initialValue: this.router.url.startsWith('/login') }
+  );
 }

@@ -58,7 +58,7 @@ describe('CustomerList', () => {
   it('shows the name, unavailable CPF, email and formatted phone of each customer', () => {
     const cells: HTMLTableCellElement[] = Array.from(fixture.nativeElement.querySelectorAll('tbody tr td'));
     expect(cells[0].textContent?.trim()).toBe('Maria da Silva');
-    expect(cells[1].textContent?.trim()).toBe('Unavailable');
+    expect(cells[1].textContent?.trim()).toBe('Indisponível');
     expect(cells[2].textContent?.trim()).toBe('maria@example.com');
     expect(cells[3].textContent?.trim()).toBe('(11) 99999-9999');
   });
@@ -74,7 +74,7 @@ describe('CustomerList', () => {
 
     const rows: HTMLTableRowElement[] = Array.from(fixture.nativeElement.querySelectorAll('tbody .customer-row'));
     expect(rows.map((row) => row.cells[1].textContent?.trim()))
-      .toEqual(['123.***.***-09', '123.***.***-09', 'Unavailable']);
+      .toEqual(['123.***.***-09', '123.***.***-09', 'Indisponível']);
     expect(fixture.nativeElement.querySelector('tbody').innerHTML).not.toContain('123456789');
   });
 
@@ -234,7 +234,7 @@ describe('CustomerList', () => {
 
     for (const invalid of ['', 'ab', '  ab  ', 'a'.repeat(151)]) {
       submit(invalid);
-      expect(fixture.nativeElement.textContent).toContain('Enter a name between 3 and 150 characters.');
+      expect(fixture.nativeElement.textContent).toContain('Informe um nome entre 3 e 150 caracteres.');
       expect(name.getAttribute('aria-invalid')).toBe('true');
       expect(service.getCustomers).not.toHaveBeenCalled();
     }
@@ -249,7 +249,7 @@ describe('CustomerList', () => {
     submit('ab');
     fixture.nativeElement.querySelector('.filter-actions button[type="button"]').click();
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).not.toContain('Enter a name between 3 and 150 characters.');
+    expect(fixture.nativeElement.textContent).not.toContain('Informe um nome entre 3 e 150 caracteres.');
     expect(name.value).toBe('');
   });
 
@@ -282,7 +282,7 @@ describe('CustomerList', () => {
     service.getCustomers.mockReturnValue(of(page));
     fixture.componentInstance.searchCustomers('does not exist', '');
     fixture.detectChanges();
-    expect(fixture.nativeElement.textContent).toContain('No customers match your filters.');
+    expect(fixture.nativeElement.textContent).toContain('Nenhum cliente corresponde aos filtros.');
 
     service.getCustomers.mockImplementation((pageNumber: number) => pageNumber === 0
       ? of({ ...page, data: { ...page.data, totalPages: 2 } })
@@ -291,7 +291,7 @@ describe('CustomerList', () => {
     fixture.detectChanges();
     expect(fixture.componentInstance.customers()).toEqual([]);
     expect(fixture.nativeElement.textContent).toContain('Second page failed');
-    expect(fixture.nativeElement.textContent).toContain('Unable to load customers.');
+    expect(fixture.nativeElement.textContent).toContain('Não foi possível carregar os clientes.');
   });
 
   it('cancels a pending search when filters are cleared', () => {
@@ -376,7 +376,7 @@ describe('CustomerList', () => {
 
     expect(fixture.componentInstance.customers()).toEqual([]);
     expect(fixture.nativeElement.textContent).toContain('Second page failed');
-    expect(fixture.nativeElement.textContent).toContain('Unable to load customers.');
+    expect(fixture.nativeElement.textContent).toContain('Não foi possível carregar os clientes.');
     fixture.detectChanges();
     expect(service.getCustomers).toHaveBeenCalledTimes(2);
 
